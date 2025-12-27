@@ -25,5 +25,6 @@ app.include_router(requests.router)
 app.include_router(users.router)
 app.include_router(teams.router)
 app.include_router(categories.router)
-from app.api import seed
+from app.api import seed, calendar
 app.include_router(seed.router)
+app.include_router(calendar.router)

@@ -1,16 +1,18 @@
 from pydantic import BaseModel
 from datetime import datetime
-from typing import Literal, Optional
+from typing import Optional, Literal
 
 class MaintenanceCreate(BaseModel):
     subject: str
     equipment_id: int
     category_id: int
     maintenance_type: str
-    assigned_team_id: int
-    assigned_technician_id: int
-    scheduled_date: datetime
-    estimated_duration_hours: int
+
+    # Optional for now
+    assigned_team_id: Optional[int] = None
+    assigned_technician_id: Optional[int] = None
+    scheduled_date: Optional[datetime] = None
+    estimated_duration_hours: Optional[int] = None
 
 
 class MaintenanceStageUpdate(BaseModel):

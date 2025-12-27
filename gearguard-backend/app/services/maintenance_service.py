@@ -20,18 +20,21 @@ def create_request(db, payload, user_id: str):
     request_number = f"MR-{year}-{count + 1:04d}"
 
     request = MaintenanceRequest(
-        request_number=request_number,
-        subject=payload.subject,
-        equipment_id=payload.equipment_id,
-        category_id=payload.category_id,
-        maintenance_type=payload.maintenance_type,
-        assigned_team_id=payload.assigned_team_id,
-        assigned_technician_id=payload.assigned_technician_id,
-        scheduled_date=payload.scheduled_date,
-        estimated_duration_hours=payload.estimated_duration_hours,
-        stage="new",
-        created_by=user_id
-    )
+    request_number=request_number,
+    subject=payload.subject,
+    equipment_id=payload.equipment_id,
+    category_id=payload.category_id,
+    maintenance_type=payload.maintenance_type,
+
+    assigned_team_id=payload.assigned_team_id,
+    assigned_technician_id=payload.assigned_technician_id,
+    scheduled_date=payload.scheduled_date,
+    estimated_duration_hours=payload.estimated_duration_hours,
+
+    stage="new",
+    created_by=user_id
+)
+
 
     db.add(request)
     db.commit()

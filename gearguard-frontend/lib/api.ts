@@ -16,8 +16,12 @@ export async function apiFetch<T>(
     let message = "API Error";
     try {
       const data = await res.json();
-      message = data.detail || message;
-    } catch {}
+      if (data.detail) {
+        message = typeof data.detail === "string"
+          ? data.detail
+          : JSON.stringify(data.detail);
+      }
+    } catch { }
     throw new Error(message);
   }
 

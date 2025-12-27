@@ -14,10 +14,14 @@ class MaintenanceRequest(Base):
     maintenance_type = Column(String)
 
     stage = Column(String, default="new")
+    priority = Column(String, default="1")
     assigned_team_id = Column(Integer)
     assigned_technician_id = Column(String)
 
     scheduled_date = Column(DateTime)
     actual_duration_hours = Column(Float)
+
+    estimated_duration_hours = Column(Integer, nullable=True)
+    created_by = Column(String, nullable=True)
 
     created_at = Column(DateTime, default=datetime.utcnow)
