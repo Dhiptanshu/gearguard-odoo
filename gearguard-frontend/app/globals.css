@@ -2,36 +2,176 @@
 @tailwind components;
 @tailwind utilities;
 
+/* =========================================================
+   ROOT THEME VARIABLES — ODOO INSPIRED (LIGHT PURPLE)
+   ========================================================= */
 @layer base {
   :root {
-    --background: 0 0% 10%;
-    --foreground: 0 0% 98%;
-    --card: 0 0% 12%;
-    --card-foreground: 0 0% 98%;
-    --popover: 0 0% 12%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 0 0% 98%;
-    --primary-foreground: 0 0% 10%;
-    --secondary: 0 0% 16%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 0 0% 16%;
-    --muted-foreground: 0 0% 64%;
-    --accent: 0 0% 16%;
-    --accent-foreground: 0 0% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 22%;
-    --input: 0 0% 22%;
-    --ring: 0 0% 80%;
-    --radius: 0.5rem;
+    /* -------- Base Colors -------- */
+    --background: 330 25% 92%;
+    --foreground: 330 40% 18%;
+
+    /* -------- Cards / Surfaces -------- */
+    --card: 0 0% 100%;
+    --card-foreground: 330 40% 18%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 330 40% 18%;
+
+    /* -------- Primary (Buttons, Highlights) -------- */
+    --primary: 330 40% 32%;
+    --primary-foreground: 0 0% 100%;
+
+    /* -------- Secondary -------- */
+    --secondary: 330 20% 90%;
+    --secondary-foreground: 330 40% 18%;
+
+    /* -------- Muted / Subtle Text -------- */
+    --muted: 330 15% 88%;
+    --muted-foreground: 330 20% 35%;
+
+    /* -------- Accent -------- */
+    --accent: 330 30% 85%;
+    --accent-foreground: 330 40% 18%;
+
+    /* -------- Destructive -------- */
+    --destructive: 0 75% 55%;
+    --destructive-foreground: 0 0% 100%;
+
+    /* -------- Borders / Inputs -------- */
+    --border: 330 20% 82%;
+    --input: 330 20% 82%;
+    --ring: 330 40% 32%;
+
+    /* -------- Radius -------- */
+    --radius: 0.6rem;
   }
 }
 
+/* =========================================================
+   GLOBAL BASE STYLES
+   ========================================================= */
 @layer base {
   * {
     @apply border-border;
   }
+
+  html,
+  body {
+    height: 100%;
+  }
+
   body {
     @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
   }
+}
+
+/* =========================================================
+   FIX BLACK BACKGROUNDS (IMPORTANT)
+   ========================================================= */
+
+/* Prevent ANY accidental dark backgrounds */
+header,
+nav,
+main,
+section,
+aside,
+footer {
+  background-color: transparent;
+}
+
+/* =========================================================
+   TYPOGRAPHY IMPROVEMENTS
+   ========================================================= */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: hsl(330 45% 22%);
+  font-weight: 700;
+}
+
+p {
+  color: hsl(330 25% 32%);
+}
+
+/* =========================================================
+   LINKS
+   ========================================================= */
+a {
+  color: hsl(330 40% 32%);
+}
+
+a:hover {
+  color: hsl(330 45% 22%);
+}
+
+/* =========================================================
+   SCROLLBAR — LIGHT PURPLE
+   ========================================================= */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: hsl(330 30% 70%) transparent;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: hsl(330 30% 70%);
+  border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: hsl(330 35% 60%);
+}
+
+/* =========================================================
+   TABLES
+   ========================================================= */
+table {
+  background-color: hsl(0 0% 100%);
+}
+
+th {
+  color: hsl(330 40% 22%);
+}
+
+td {
+  color: hsl(330 25% 28%);
+}
+
+/* =========================================================
+   FORMS
+   ========================================================= */
+input,
+select,
+textarea {
+  background-color: hsl(0 0% 100%);
+  color: hsl(330 40% 18%);
+}
+
+/* =========================================================
+   BUTTON OVERRIDES (ODOO FEEL)
+   ========================================================= */
+button {
+  border-radius: var(--radius);
+}
+
+/* =========================================================
+   REMOVE DARK MODE BLEED (VERY IMPORTANT)
+   ========================================================= */
+:root[class~="dark"],
+html[class~="dark"] {
+  --background: 330 25% 92%;
+  --foreground: 330 40% 18%;
 }

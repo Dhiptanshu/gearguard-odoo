@@ -1,15 +1,10 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.db.base import Base
 from app.db.session import engine
+from app.db.base import Base
 
-# 👇 IMPORT ALL MODELS HERE (IMPORTANT)
-from app.models.equipment import Equipment
-from app.models.maintenance_request import MaintenanceRequest
-from app.models.request_history import RequestHistory
-
-from app.api import equipment, requests
+from app.api import equipment, requests, users, teams, categories
 
 app = FastAPI(title="GearGuard Backend")
 
@@ -21,8 +16,14 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# 👇 CREATE TABLES AFTER MODELS ARE IMPORTED
+# Create tables ONCE
 Base.metadata.create_all(bind=engine)
 
+# Register routers
 app.include_router(equipment.router)
 app.include_router(requests.router)
+app.include_router(users.router)
+app.include_router(teams.router)
+app.include_router(categories.router)
+from app.api import seed
+app.include_router(seed.router)

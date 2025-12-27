@@ -11,39 +11,32 @@ from sqlalchemy import func
 from datetime import datetime
 
 def create_request(db, payload, user_id: str):
-    equipment = (
-        db.query(Equipment)
-        .filter(Equipment.id == payload.equipment_id)
-        .first()
-    )
-
+    equipment = db.get(Equipment, payload.equipment_id)
     if not equipment:
-        raise HTTPException(status_code=404, detail="Equipment not found")
+        raise HTTPException(404, "Equipment not found")
 
-    # 🔑 Generate request number
     year = datetime.utcnow().year
-
-    count = (
-        db.query(func.count(MaintenanceRequest.id))
-        .scalar()
-    ) or 0
-
+    count = db.query(MaintenanceRequest).count()
     request_number = f"MR-{year}-{count + 1:04d}"
 
     request = MaintenanceRequest(
-        request_number=request_number,   # ✅ FIX
+        request_number=request_number,
         subject=payload.subject,
-        equipment_id=equipment.id,
+        equipment_id=payload.equipment_id,
+        category_id=payload.category_id,
         maintenance_type=payload.maintenance_type,
-        stage="new"
+        assigned_team_id=payload.assigned_team_id,
+        assigned_technician_id=payload.assigned_technician_id,
+        scheduled_date=payload.scheduled_date,
+        estimated_duration_hours=payload.estimated_duration_hours,
+        stage="new",
+        created_by=user_id
     )
 
     db.add(request)
     db.commit()
     db.refresh(request)
-
     return request
-
 
 from fastapi import HTTPException
 

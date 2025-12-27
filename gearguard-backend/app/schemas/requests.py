@@ -5,8 +5,13 @@ from typing import Literal, Optional
 class MaintenanceCreate(BaseModel):
     subject: str
     equipment_id: int
-    maintenance_type: Literal["corrective", "preventive"]
-    scheduled_date: Optional[datetime] = None
+    category_id: int
+    maintenance_type: str
+    assigned_team_id: int
+    assigned_technician_id: int
+    scheduled_date: datetime
+    estimated_duration_hours: int
+
 
 class MaintenanceStageUpdate(BaseModel):
     stage: Literal["new", "in_progress", "repaired", "scrap"]
