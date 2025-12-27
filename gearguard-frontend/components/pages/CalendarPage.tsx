@@ -23,44 +23,38 @@ const MONTHS = [
   'December',
 ]
 
-const events = [
-  {
-    id: 1,
-    title: 'CNC Machine Preventive Check',
-    date: '2025-12-15',
-    time: '10:00',
-    type: 'preventive',
-    technician: 'Marc Demo',
-  },
-  {
-    id: 2,
-    title: 'HVAC System Inspection',
-    date: '2025-12-18',
-    time: '14:00',
-    type: 'preventive',
-    technician: 'Aka Foster',
-  },
-  {
-    id: 3,
-    title: 'Printer Repair',
-    date: '2025-12-20',
-    time: '09:00',
-    type: 'corrective',
-    technician: 'Mitchell Admin',
-  },
-  {
-    id: 4,
-    title: 'Monthly Server Maintenance',
-    date: '2025-12-28',
-    time: '16:00',
-    type: 'preventive',
-    technician: 'Marc Demo',
-  },
-]
+import { getCalendarEvents, CalendarEvent } from '@/lib/calendar'
+
+interface FormattedEvent {
+  id: number
+  title: string
+  date: string
+  time: string
+  type: string
+  technician: string
+}
 
 export default function CalendarPage() {
-  const [currentDate, setCurrentDate] = useState(new Date(2025, 11, 1)) // December 2025
-  const [selectedDate, setSelectedDate] = useState(new Date(2025, 11, 18))
+  const [currentDate, setCurrentDate] = useState(new Date())
+  const [selectedDate, setSelectedDate] = useState(new Date())
+  const [events, setEvents] = useState<FormattedEvent[]>([])
+
+  React.useEffect(() => {
+    getCalendarEvents().then(apiEvents => {
+      const formatted = apiEvents.map(e => {
+        const start = new Date(e.start);
+        return {
+          id: e.id,
+          title: e.title.split('(')[0].trim(), // Remove status from title if present
+          date: start.toISOString().split('T')[0],
+          time: start.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false }),
+          type: (e.title.toLowerCase().includes('preventive') || e.extendedProps?.priority === 'preventive') ? 'preventive' : 'corrective', // Infer type or use extendedProps
+          technician: 'Assigned Tech' // Placeholder until backend returns this
+        }
+      })
+      setEvents(formatted)
+    })
+  }, [])
 
   const year = currentDate.getFullYear()
   const month = currentDate.getMonth()
@@ -71,7 +65,7 @@ export default function CalendarPage() {
   const daysInPrevMonth = new Date(year, month, 0).getDate()
 
   const calendarDays = []
-  
+
   // Previous month days
   for (let i = firstDay - 1; i >= 0; i--) {
     calendarDays.push({
@@ -80,7 +74,7 @@ export default function CalendarPage() {
       date: new Date(year, month - 1, daysInPrevMonth - i),
     })
   }
-  
+
   // Current month days
   for (let i = 1; i <= daysInMonth; i++) {
     calendarDays.push({
@@ -89,7 +83,7 @@ export default function CalendarPage() {
       date: new Date(year, month, i),
     })
   }
-  
+
   // Next month days
   const remainingDays = 42 - calendarDays.length
   for (let i = 1; i <= remainingDays; i++) {
@@ -106,7 +100,7 @@ export default function CalendarPage() {
   }
 
   const isToday = (date: Date) => {
-    const today = new Date(2025, 11, 18)
+    const today = new Date()
     return (
       date.getDate() === today.getDate() &&
       date.getMonth() === today.getMonth() &&
@@ -207,9 +201,9 @@ export default function CalendarPage() {
                           ? 'border-border bg-card'
                           : 'border-transparent bg-muted/20 opacity-50',
                         isToday(dayInfo.date) &&
-                          'border-blue-500 bg-blue-500/10',
+                        'border-blue-500 bg-blue-500/10',
                         isSelected(dayInfo.date) &&
-                          'border-blue-500 bg-blue-500/20 ring-2 ring-blue-500/50'
+                        'border-blue-500 bg-blue-500/20 ring-2 ring-blue-500/50'
                       )}
                     >
                       <div

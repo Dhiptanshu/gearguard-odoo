@@ -3,20 +3,6 @@
 import React from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Search, QrCode, ChevronRight } from 'lucide-react'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
-import { cn } from '@/lib/utils'
-
-const navigation = [
-  { name: 'Dashboard', href: '/' },
-  { name: 'Maintenance', href: '/maintenance' },
-  { name: 'Calendar', href: '/calendar' },
-  { name: 'Equipment', href: '/equipment' },
-  { name: 'Reporting', href: '/reporting' },
-  { name: 'Teams', href: '/teams' },
-]
 
 export default function DashboardLayout({
   children,
@@ -25,43 +11,111 @@ export default function DashboardLayout({
 }) {
   const pathname = usePathname()
 
-  const breadcrumbs = React.useMemo(() => {
-    const paths = pathname.split('/').filter(Boolean)
-    if (paths.length === 0) return [{ name: 'Dashboard', href: '/' }]
-    
-    return paths.map((path, index) => ({
-      name: path.charAt(0).toUpperCase() + path.slice(1),
-      href: '/' + paths.slice(0, index + 1).join('/'),
-    }))
-  }, [pathname])
-
   return (
-    <div className="min-h-screen bg-[#1a1a1a]">
-      {/* Top Navigation */}
-      <header className="sticky top-0 z-50 border-b border-border bg-[#0f0f0f]/95 backdrop-blur supports-[backdrop-filter]:bg-[#0f0f0f]/60">
-        <div className="flex h-16 items-center gap-6 px-6">
-          {/* Logo */}
-          <div className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-md bg-gradient-to-br from-blue-500 to-purple-600">
-              <span className="text-sm font-bold text-white">GG</span>
+    <div
+      className="
+        min-h-screen
+        bg-[hsl(330,25%,92%)]
+      "
+    >
+      {/* ======================================================
+          NAVBAR
+          - Slightly darker than page background
+          - Always visible
+          - Odoo-style soft separation
+      ====================================================== */}
+      <header
+        className="
+          sticky
+          top-0
+          z-50
+          border-b
+          border-[hsl(330,25%,78%)]
+          bg-[hsl(330,30%,85%)]
+          backdrop-blur
+        "
+      >
+        <div
+          className="
+            flex
+            items-center
+            justify-between
+            px-8
+            py-3
+          "
+        >
+          {/* ================= LOGO ================= */}
+          <div
+            className="
+              flex
+              items-center
+              gap-3
+              font-bold
+              text-[hsl(330,45%,22%)]
+            "
+          >
+            <div
+              className="
+                flex
+                h-8
+                w-8
+                items-center
+                justify-center
+                rounded-md
+                bg-[hsl(270,70%,60%)]
+                text-white
+                shadow-sm
+              "
+            >
+              GG
             </div>
-            <span className="text-lg font-semibold">GearGuard</span>
+            <span className="tracking-wide">
+              GearGuard
+            </span>
           </div>
 
-          {/* Navigation Tabs */}
-          <nav className="flex items-center gap-1">
-            {navigation.map((item) => {
+          {/* ================= NAVIGATION ================= */}
+          <nav
+            className="
+              flex
+              gap-6
+              text-sm
+              font-medium
+            "
+          >
+            {[
+              { name: 'Dashboard', href: '/' },
+              { name: 'Maintenance', href: '/maintenance' },
+              { name: 'Calendar', href: '/calendar' },
+              { name: 'Equipment', href: '/equipment' },
+              { name: 'Reporting', href: '/reporting' },
+              { name: 'Teams', href: '/teams' },
+            ].map((item) => {
               const isActive = pathname === item.href
+
               return (
                 <Link
                   key={item.name}
                   href={item.href}
-                  className={cn(
-                    'rounded-md px-3 py-2 text-sm font-medium transition-colors',
-                    isActive
-                      ? 'bg-accent text-accent-foreground'
-                      : 'text-muted-foreground hover:bg-accent/50 hover:text-foreground'
-                  )}
+                  className={`
+                    rounded-md
+                    px-3
+                    py-1
+                    transition
+                    ${
+                      isActive
+                        ? `
+                          bg-[hsl(330,40%,72%)]
+                          text-[hsl(330,45%,20%)]
+                          shadow-sm
+                        `
+                        : `
+                          text-[hsl(330,30%,32%)]
+                          hover:text-[hsl(330,45%,22%)]
+                          hover:bg-[hsl(330,25%,88%)]
+                        `
+                    }
+                  `}
                 >
                   {item.name}
                 </Link>
@@ -69,66 +123,49 @@ export default function DashboardLayout({
             })}
           </nav>
 
-          {/* Search Bar */}
-          <div className="ml-auto flex w-full max-w-md items-center gap-2">
-            <div className="relative w-full">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-              <Input
-                placeholder="Search assets, requests..."
-                className="pl-10 pr-10"
-              />
-              <Button
-                size="icon"
-                variant="ghost"
-                className="absolute right-1 top-1/2 h-7 w-7 -translate-y-1/2"
-              >
-                <QrCode className="h-4 w-4" />
-              </Button>
-            </div>
-          </div>
-
-          {/* User Profile */}
+          {/* ================= USER INFO ================= */}
           <div className="flex items-center gap-3">
-            <div className="text-right">
-              <div className="text-sm font-medium">Mitchell Admin</div>
-              <div className="text-xs text-muted-foreground">Administrator</div>
+            <div className="text-right text-sm leading-tight">
+              <div className="font-semibold text-[hsl(330,45%,22%)]">
+                Mitchell Admin
+              </div>
+              <div className="text-xs text-[hsl(330,30%,40%)]">
+                Administrator
+              </div>
             </div>
-            <Avatar>
-              <AvatarImage src="/avatars/mitchell.jpg" />
-              <AvatarFallback className="bg-gradient-to-br from-blue-500 to-purple-600">
-                MA
-              </AvatarFallback>
-            </Avatar>
-          </div>
-        </div>
 
-        {/* Breadcrumbs */}
-        <div className="border-t border-border/50 bg-[#0a0a0a]/50 px-6 py-2">
-          <div className="flex items-center gap-2 text-sm">
-            {breadcrumbs.map((crumb, index) => (
-              <React.Fragment key={crumb.href}>
-                {index > 0 && (
-                  <ChevronRight className="h-4 w-4 text-muted-foreground" />
-                )}
-                <Link
-                  href={crumb.href}
-                  className={cn(
-                    'transition-colors',
-                    index === breadcrumbs.length - 1
-                      ? 'font-medium text-foreground'
-                      : 'text-muted-foreground hover:text-foreground'
-                  )}
-                >
-                  {crumb.name}
-                </Link>
-              </React.Fragment>
-            ))}
+            <div
+              className="
+                flex
+                h-9
+                w-9
+                items-center
+                justify-center
+                rounded-full
+                bg-[hsl(270,70%,60%)]
+                text-white
+                shadow-sm
+              "
+            >
+              MA
+            </div>
           </div>
         </div>
       </header>
 
-      {/* Main Content */}
-      <main className="p-6">{children}</main>
+      {/* ======================================================
+          MAIN CONTENT AREA
+          - Adds padding so cards float on page
+          - Cards themselves will have shadows
+      ====================================================== */}
+      <main
+        className="
+          px-8
+          py-8
+        "
+      >
+        {children}
+      </main>
     </div>
   )
 }

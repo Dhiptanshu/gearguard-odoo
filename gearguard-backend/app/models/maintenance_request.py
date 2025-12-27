@@ -7,17 +7,21 @@ class MaintenanceRequest(Base):
 
     id = Column(Integer, primary_key=True)
     request_number = Column(String, unique=True, nullable=False)
-    subject = Column(String, nullable=False)
+    title = Column(String, nullable=False)
 
     equipment_id = Column(Integer, ForeignKey("equipment.id"))
     category_id = Column(Integer)
     maintenance_type = Column(String)
 
     stage = Column(String, default="new")
+    priority = Column(String, default="1")
     assigned_team_id = Column(Integer)
     assigned_technician_id = Column(String)
 
     scheduled_date = Column(DateTime)
     actual_duration_hours = Column(Float)
+
+    estimated_duration_hours = Column(Integer, nullable=True)
+    created_by = Column(String, nullable=True)
 
     created_at = Column(DateTime, default=datetime.utcnow)

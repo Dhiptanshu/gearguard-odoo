@@ -13,3 +13,5 @@ class Equipment(Base):
     location = Column(String)
     status = Column(String, default="operational")
     is_critical = Column(Boolean, default=False)
+    employee = Column(String, nullable=True)
+    department = Column(String, nullable=True)

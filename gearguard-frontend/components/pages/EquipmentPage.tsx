@@ -1,68 +1,159 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
-import { Search, Plus, Settings, Trash2, Eye } from 'lucide-react'
+import { Search, Plus, Settings, Trash2, Eye, X } from 'lucide-react'
+import { getEquipment, Equipment } from '@/lib/equipment'
+import { apiFetch } from '@/lib/api'
+import { Label } from '@/components/ui/label'
 
-const equipment = [
-  {
-    id: 1,
-    name: 'Samsung Monitor 15"',
-    employee: 'Tejas Modi',
-    department: 'Admin',
-    serialNumber: 'MT/125/227F8837',
-    technician: 'Mitchell Admin',
-    category: 'Monitors',
-    company: 'My Company (San Francisco)',
-  },
-  {
-    id: 2,
-    name: 'Acer Laptop',
-    employee: 'Bhaumik P',
-    department: 'Technician',
-    serialNumber: 'MT/122/11112222',
-    technician: 'Marc Demo',
-    category: 'Computers',
-    company: 'My Company (San Francisco)',
-  },
-  {
-    id: 3,
-    name: 'HP LaserJet Pro',
-    employee: 'Sarah Chen',
-    department: 'Sales',
-    serialNumber: 'HP/456/88990011',
-    technician: 'Aka Foster',
-    category: 'Printers',
-    company: 'My Company (San Francisco)',
-  },
-  {
-    id: 4,
-    name: 'CNC Machine Model X',
-    employee: 'Production Team',
-    department: 'Production',
-    serialNumber: 'CNC/789/55667788',
-    technician: 'Marc Demo',
-    category: 'Machinery',
-    company: 'My Company (San Francisco)',
-  },
-]
+// Dialog Component for Create/Edit
+function EquipmentDialog({
+  isOpen,
+  onClose,
+  onSave,
+  initialData
+}: {
+  isOpen: boolean;
+  onClose: () => void;
+  onSave: (data: any) => void;
+  initialData?: Equipment | null;
+}) {
+  const [formData, setFormData] = useState({
+    name: '',
+    serial_number: '',
+    department: '',
+    employee: '',
+    category_id: '',
+    status: 'active',
+  });
+
+  useEffect(() => {
+    if (initialData) {
+      setFormData({
+        name: initialData.name,
+        serial_number: initialData.serial_number || '',
+        department: initialData.department || '',
+        employee: initialData.employee || '',
+        category_id: initialData.category_id ? initialData.category_id.toString() : '',
+        status: initialData.status || 'active',
+      })
+    } else {
+      setFormData({
+        name: '', serial_number: '', department: '', employee: '', category_id: '', status: 'active'
+      })
+    }
+  }, [initialData, isOpen])
+
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+      <Card className="w-[500px]">
+        <CardHeader className="flex flex-row items-center justify-between">
+          <CardTitle>{initialData ? 'Edit Equipment' : 'New Equipment'}</CardTitle>
+          <Button variant="ghost" size="icon" onClick={onClose}><X className="h-4 w-4" /></Button>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="space-y-2">
+            <Label>Name</Label>
+            <Input value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })} />
+          </div>
+          <div className="space-y-2">
+            <Label>Serial Number</Label>
+            <Input value={formData.serial_number} onChange={e => setFormData({ ...formData, serial_number: e.target.value })} />
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label>Department</Label>
+              <Input value={formData.department} onChange={e => setFormData({ ...formData, department: e.target.value })} />
+            </div>
+            <div className="space-y-2">
+              <Label>Employee</Label>
+              <Input value={formData.employee} onChange={e => setFormData({ ...formData, employee: e.target.value })} />
+            </div>
+          </div>
+          <div className="flex justify-end gap-2 pt-4">
+            <Button variant="outline" onClick={onClose}>Cancel</Button>
+            <Button onClick={() => onSave(formData)}>Save</Button>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  )
+}
 
 export default function EquipmentPage() {
   const [selectedEquipment, setSelectedEquipment] = useState<number | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
+  const [equipmentList, setEquipmentList] = useState<Equipment[]>([])
+  const [isDialogOpen, setIsDialogOpen] = useState(false)
+  const [editingItem, setEditingItem] = useState<Equipment | null>(null)
 
-  const filteredEquipment = equipment.filter((item) =>
+  const loadEquipment = async () => {
+    try {
+      const data = await getEquipment()
+      setEquipmentList(data)
+    } catch (e) {
+      console.error("Failed to load equipment", e)
+    }
+  }
+
+  useEffect(() => {
+    loadEquipment()
+  }, [])
+
+  const handleSave = async (data: any) => {
+    try {
+      if (editingItem) {
+        await apiFetch(`/api/equipment/${editingItem.id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        })
+      } else {
+        await apiFetch('/api/equipment', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        })
+      }
+      setIsDialogOpen(false)
+      loadEquipment()
+    } catch (e) {
+      alert("Failed to save: " + e)
+    }
+  }
+
+  const handleDelete = async (id: number) => {
+    if (!confirm("Are you sure?")) return;
+    try {
+      await apiFetch(`/api/equipment/${id}`, { method: 'DELETE' })
+      loadEquipment()
+    } catch (e) {
+      alert("Failed to delete")
+    }
+  }
+
+  const filteredEquipment = equipmentList.filter((item) =>
     item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    item.serialNumber.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    item.category.toLowerCase().includes(searchQuery.toLowerCase())
+    (item.serial_number || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+    (item.department || '').toLowerCase().includes(searchQuery.toLowerCase())
   )
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 relative">
+      <EquipmentDialog
+        isOpen={isDialogOpen}
+        onClose={() => setIsDialogOpen(false)}
+        onSave={handleSave}
+        initialData={editingItem}
+      />
+
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
@@ -71,7 +162,7 @@ export default function EquipmentPage() {
             Manage all company assets and equipment
           </p>
         </div>
-        <Button className="gap-2 bg-blue-600 hover:bg-blue-700">
+        <Button className="gap-2 bg-blue-600 hover:bg-blue-700" onClick={() => { setEditingItem(null); setIsDialogOpen(true); }}>
           <Plus className="h-4 w-4" />
           New Equipment
         </Button>
@@ -83,7 +174,7 @@ export default function EquipmentPage() {
           <div className="relative">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
-              placeholder="Search by name, serial number, or category..."
+              placeholder="Search by name, serial number, or department..."
               className="pl-10"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
@@ -106,9 +197,7 @@ export default function EquipmentPage() {
                   <th className="pb-3 font-medium">Employee</th>
                   <th className="pb-3 font-medium">Department</th>
                   <th className="pb-3 font-medium">Serial Number</th>
-                  <th className="pb-3 font-medium">Technician</th>
-                  <th className="pb-3 font-medium">Category</th>
-                  <th className="pb-3 font-medium">Company</th>
+                  <th className="pb-3 font-medium">Status</th>
                   <th className="pb-3 font-medium">Actions</th>
                 </tr>
               </thead>
@@ -116,9 +205,8 @@ export default function EquipmentPage() {
                 {filteredEquipment.map((item) => (
                   <tr
                     key={item.id}
-                    className={`border-b border-border/50 transition-colors hover:bg-muted/50 cursor-pointer ${
-                      selectedEquipment === item.id ? 'bg-blue-500/10' : ''
-                    }`}
+                    className={`border-b border-border/50 transition-colors hover:bg-muted/50 cursor-pointer ${selectedEquipment === item.id ? 'bg-blue-500/10' : ''
+                      }`}
                     onClick={() => setSelectedEquipment(item.id)}
                   >
                     <td className="py-4">
@@ -133,40 +221,26 @@ export default function EquipmentPage() {
                       <div className="flex items-center gap-2">
                         <Avatar className="h-7 w-7">
                           <AvatarFallback className="text-xs">
-                            {item.employee
+                            {(item.employee || "Unk")
                               .split(' ')
                               .map((n) => n[0])
                               .join('')}
                           </AvatarFallback>
                         </Avatar>
-                        <span>{item.employee}</span>
+                        <span>{item.employee || "Unassigned"}</span>
                       </div>
                     </td>
                     <td className="py-4">
-                      <Badge variant="outline">{item.department}</Badge>
+                      <Badge variant="outline">{item.department || "General"}</Badge>
                     </td>
                     <td className="py-4">
                       <code className="rounded bg-muted px-2 py-1 text-xs">
-                        {item.serialNumber}
+                        {item.serial_number}
                       </code>
                     </td>
                     <td className="py-4">
-                      <div className="flex items-center gap-2">
-                        <Avatar className="h-7 w-7">
-                          <AvatarFallback className="bg-blue-500/20 text-xs">
-                            {item.technician
-                              .split(' ')
-                              .map((n) => n[0])
-                              .join('')}
-                          </AvatarFallback>
-                        </Avatar>
-                        <span>{item.technician}</span>
-                      </div>
+                      <Badge variant={item.status === 'active' ? 'default' : 'secondary'}>{item.status}</Badge>
                     </td>
-                    <td className="py-4">
-                      <Badge variant="secondary">{item.category}</Badge>
-                    </td>
-                    <td className="py-4 text-muted-foreground">{item.company}</td>
                     <td className="py-4">
                       <div className="flex items-center gap-2">
                         <Button
@@ -175,18 +249,8 @@ export default function EquipmentPage() {
                           className="h-8 w-8"
                           onClick={(e) => {
                             e.stopPropagation()
-                            // View details
-                          }}
-                        >
-                          <Eye className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          size="icon"
-                          variant="ghost"
-                          className="h-8 w-8"
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            // Edit
+                            setEditingItem(item);
+                            setIsDialogOpen(true);
                           }}
                         >
                           <Settings className="h-4 w-4" />
@@ -197,7 +261,7 @@ export default function EquipmentPage() {
                           className="h-8 w-8 text-red-500 hover:text-red-600"
                           onClick={(e) => {
                             e.stopPropagation()
-                            // Delete
+                            handleDelete(item.id);
                           }}
                         >
                           <Trash2 className="h-4 w-4" />

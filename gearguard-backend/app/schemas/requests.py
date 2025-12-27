@@ -1,12 +1,19 @@
 from pydantic import BaseModel
 from datetime import datetime
-from typing import Literal, Optional
+from typing import Optional, Literal
 
 class MaintenanceCreate(BaseModel):
-    subject: str
+    title: str
     equipment_id: int
-    maintenance_type: Literal["corrective", "preventive"]
+    category_id: int
+    maintenance_type: str
+
+    # Optional for now
+    assigned_team_id: Optional[int] = None
+    assigned_technician_id: Optional[int] = None
     scheduled_date: Optional[datetime] = None
+    estimated_duration_hours: Optional[int] = None
+
 
 class MaintenanceStageUpdate(BaseModel):
     stage: Literal["new", "in_progress", "repaired", "scrap"]
@@ -14,9 +21,9 @@ class MaintenanceStageUpdate(BaseModel):
 
 class MaintenanceOut(BaseModel):
     id: int
-    subject: str
+    title: str
     equipment_id: int
-    maintenance_type: str
+    maintenance_type: Optional[str] = None
     stage: str
 
     class Config:

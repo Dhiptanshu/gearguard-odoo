@@ -17,8 +17,14 @@ def get_db():
 from app.schemas.requests import (
     MaintenanceCreate,
     MaintenanceStageUpdate,
+    MaintenanceStageUpdate,
     MaintenanceOut
 )
+from app.models.maintenance_request import MaintenanceRequest
+
+@router.get("", response_model=list[MaintenanceOut])
+def list_requests(db: Session = Depends(get_db)):
+    return db.query(MaintenanceRequest).all()
 
 @router.post("", response_model=MaintenanceOut)
 def create(payload: MaintenanceCreate, db: Session = Depends(get_db)):
