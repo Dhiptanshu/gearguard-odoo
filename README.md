@@ -27,8 +27,6 @@ GearGuard is a comprehensive maintenance management system designed to track equ
 
 5. Initialize the database:
    python init_db.py
-   
-   Note: This script will create a SQLite database (gearguard.db) and seed it with initial data, including users, teams, and equipment. Validates database schema and populates tables with realistic sample records.
 
 6. Start the backend server:
    uvicorn app.main:app --reload
