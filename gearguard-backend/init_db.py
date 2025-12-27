@@ -7,6 +7,7 @@ from app.models.team import Team
 from app.models.equipment_category import EquipmentCategory
 from app.models.equipment import Equipment
 from app.models.maintenance_request import MaintenanceRequest
+from app.core.security import get_password_hash
 
 def init_db():
     # Drop existing tables to ensure clean state
@@ -55,15 +56,17 @@ def init_db():
         categories = db.query(EquipmentCategory).all()
         
     # --- Seed Users ---
+    default_password = get_password_hash("admin")
+    
     users = [
-        User(name="Admin User", department="Admin", role="admin"),
-        User(name="Technician", department="Maintenance", role="technician"),
-        User(name="Mitchell Admin", department="Management", role="admin"),
-        User(name="Marc Demo", department="Production", role="user"),
-        User(name="Joel Willis", department="Sales", role="user"),
-        User(name="Hans Zimmer", department="IT", role="technician"),
-        User(name="Sarah Connor", department="Operations", role="user"),
-        User(name="John Doe", department="Logistics", role="user"),
+        User(name="Admin User", department="Admin", role="admin", email="admin@gearguard.com", hashed_password=default_password),
+        User(name="Technician", department="Maintenance", role="technician", email="tech@gearguard.com", hashed_password=default_password),
+        User(name="Mitchell Admin", department="Management", role="admin", email="mitchell@gearguard.com", hashed_password=default_password),
+        User(name="Marc Demo", department="Production", role="user", email="marc@gearguard.com", hashed_password=default_password),
+        User(name="Joel Willis", department="Sales", role="user", email="joel@gearguard.com", hashed_password=default_password),
+        User(name="Hans Zimmer", department="IT", role="technician", email="hans@gearguard.com", hashed_password=default_password),
+        User(name="Sarah Connor", department="Operations", role="user", email="sarah@gearguard.com", hashed_password=default_password),
+        User(name="John Doe", department="Logistics", role="user", email="john@gearguard.com", hashed_password=default_password),
     ]
     
     if not db.query(User).first():
