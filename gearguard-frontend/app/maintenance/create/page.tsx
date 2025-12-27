@@ -49,7 +49,7 @@ export default function CreateMaintenanceRequestPage() {
     const [error, setError] = useState("");
 
     // Form State
-    const [subject, setSubject] = useState("");
+    const [title, setTitle] = useState("");
     const [selectedEquipmentId, setSelectedEquipmentId] = useState<string>("");
     const [selectedCategoryId, setSelectedCategoryId] = useState<string>("");
     const [selectedTeamId, setSelectedTeamId] = useState<string>("");
@@ -77,15 +77,15 @@ export default function CreateMaintenanceRequestPage() {
     const categoryName = selectedEquipment ? "Auto-detected" : "Select Equipment first";
 
     const handleSubmit = async () => {
-        if (!subject || !selectedEquipmentId || !selectedCategoryId) {
-            setError("Subject, Equipment, and Category are required.");
+        if (!title || !selectedEquipmentId || !selectedCategoryId) {
+            setError("Title, Equipment, and Category are required.");
             return;
         }
 
         try {
             setLoading(true);
             await createRequest({
-                subject,
+                title,
                 equipment_id: Number(selectedEquipmentId),
                 category_id: Number(selectedCategoryId),
                 maintenance_type: maintenanceType,
@@ -120,8 +120,8 @@ export default function CreateMaintenanceRequestPage() {
                             <Input
                                 placeholder="e.g. Broken Conveyor Belt..."
                                 className="h-12 text-2xl font-bold border-none bg-transparent px-0 placeholder:text-muted-foreground/50 focus-visible:ring-0 shadow-none"
-                                value={subject}
-                                onChange={(e) => setSubject(e.target.value)}
+                                value={title}
+                                onChange={(e) => setTitle(e.target.value)}
                             />
                         </div>
                         <div className="flex gap-2">

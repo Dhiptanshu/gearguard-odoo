@@ -6,6 +6,9 @@ export interface Equipment {
   serial_number?: string;
   location?: string;
   status?: string;
+  department?: string;
+  employee?: string;
+  category_id?: number;
 }
 
 export function getEquipment() {

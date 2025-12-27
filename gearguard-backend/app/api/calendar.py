@@ -39,7 +39,7 @@ def get_calendar_events(db: Session = Depends(get_db)):
 
         events.append({
             "id": req.id,
-            "title": f"{req.subject} ({req.stage})",
+            "title": f"{req.title} ({req.stage})",
             "start": start_time, 
             "end": end_time,   
             "resourceId": req.equipment_id,

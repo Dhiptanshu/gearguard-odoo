@@ -7,7 +7,7 @@ class MaintenanceRequest(Base):
 
     id = Column(Integer, primary_key=True)
     request_number = Column(String, unique=True, nullable=False)
-    subject = Column(String, nullable=False)
+    title = Column(String, nullable=False)
 
     equipment_id = Column(Integer, ForeignKey("equipment.id"))
     category_id = Column(Integer)

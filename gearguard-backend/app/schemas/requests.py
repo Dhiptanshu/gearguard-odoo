@@ -3,7 +3,7 @@ from datetime import datetime
 from typing import Optional, Literal
 
 class MaintenanceCreate(BaseModel):
-    subject: str
+    title: str
     equipment_id: int
     category_id: int
     maintenance_type: str
@@ -21,9 +21,9 @@ class MaintenanceStageUpdate(BaseModel):
 
 class MaintenanceOut(BaseModel):
     id: int
-    subject: str
+    title: str
     equipment_id: int
-    maintenance_type: str
+    maintenance_type: Optional[str] = None
     stage: str
 
     class Config:

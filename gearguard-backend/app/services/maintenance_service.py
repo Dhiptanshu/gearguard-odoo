@@ -21,7 +21,7 @@ def create_request(db, payload, user_id: str):
 
     request = MaintenanceRequest(
     request_number=request_number,
-    subject=payload.subject,
+    title=payload.title,
     equipment_id=payload.equipment_id,
     category_id=payload.category_id,
     maintenance_type=payload.maintenance_type,

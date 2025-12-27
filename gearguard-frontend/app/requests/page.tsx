@@ -56,17 +56,17 @@ export default function RequestsPage() {
                                     <td className="p-3 font-mono text-gray-600">
                                         {req.request_number}
                                     </td>
-                                    <td className="p-3 font-medium">{req.subject}</td>
+                                    <td className="p-3 font-medium">{req.title}</td>
                                     <td className="p-3 capitalize">{req.maintenance_type}</td>
                                     <td className="p-3">
                                         <span
                                             className={`px-2 py-1 rounded-full text-xs font-medium ${req.stage === "new"
-                                                    ? "bg-blue-100 text-blue-700"
-                                                    : req.stage === "in_progress"
-                                                        ? "bg-yellow-100 text-yellow-700"
-                                                        : req.stage === "repaired"
-                                                            ? "bg-green-100 text-green-700"
-                                                            : "bg-gray-100 text-gray-700"
+                                                ? "bg-blue-100 text-blue-700"
+                                                : req.stage === "in_progress"
+                                                    ? "bg-yellow-100 text-yellow-700"
+                                                    : req.stage === "repaired"
+                                                        ? "bg-green-100 text-green-700"
+                                                        : "bg-gray-100 text-gray-700"
                                                 }`}
                                         >
                                             {req.stage.replace("_", " ")}

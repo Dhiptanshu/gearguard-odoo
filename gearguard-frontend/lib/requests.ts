@@ -3,7 +3,7 @@ import { apiFetch } from "./api";
 export type MaintenanceType = "corrective" | "preventive";
 
 export interface CreateRequestPayload {
-  subject: string;
+  title: string;
   equipment_id: number;
   category_id: number;
   maintenance_type: MaintenanceType;
@@ -17,7 +17,7 @@ export interface CreateRequestPayload {
 export interface MaintenanceRequest {
   id: number;
   request_number: string;
-  subject: string;
+  title: string;
   equipment_id: number;
   category_id: number;
   status: string;

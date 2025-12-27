@@ -83,15 +83,15 @@ export default function MaintenancePage() {
                               {req.request_number}
                             </span>
                             <span className={`text-[10px] px-1.5 py-0.5 rounded uppercase font-bold tracking-wider ${req.priority === '2' ? 'bg-red-50 text-red-600' :
-                                req.priority === '1' ? 'bg-amber-50 text-amber-600' :
-                                  'bg-blue-50 text-blue-600'
+                              req.priority === '1' ? 'bg-amber-50 text-amber-600' :
+                                'bg-blue-50 text-blue-600'
                               }`}>
                               {req.priority === '2' ? 'High' : req.priority === '1' ? 'Med' : 'Low'}
                             </span>
                           </div>
 
                           <h3 className="font-medium text-gray-900 mb-1 group-hover:text-[hsl(270,70%,60%)] transition-colors">
-                            {req.subject}
+                            {req.title}
                           </h3>
 
                           <div className="flex items-center gap-2 text-xs text-gray-500 mb-3">
